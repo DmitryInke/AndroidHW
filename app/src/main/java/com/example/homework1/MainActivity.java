@@ -4,8 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.BounceInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -25,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
     private ImageView leftCar;
     private ImageView centerCar;
     private ImageView rightCar;
-    private ImageView main_IMG_background;
+    private ImageView main_IMG_background_left_road;
+    private ImageView main_IMG_background_center_road;
+    private ImageView main_IMG_background_right_road;
 
 
     @Override
@@ -42,12 +42,15 @@ public class MainActivity extends AppCompatActivity {
         leftCar = findViewById(R.id.leftCar);
         centerCar = findViewById(R.id.centerCar);
         rightCar = findViewById(R.id.rightCar);
-        main_IMG_background = findViewById(R.id.main_IMG_background);
+        main_IMG_background_left_road = findViewById(R.id.main_IMG_background_left_road);
+        main_IMG_background_center_road = findViewById(R.id.main_IMG_background_center_road);
+        main_IMG_background_right_road = findViewById(R.id.main_IMG_background_right_road);
     }
 
     private void initViews() {
-        Glide.with(this).load(R.drawable.city_street).centerCrop().into(main_IMG_background);
-
+        Glide.with(this).load(R.drawable.city_street_img).centerCrop().into(main_IMG_background_left_road);
+        Glide.with(this).load(R.drawable.city_street_img).centerCrop().into(main_IMG_background_center_road);
+        Glide.with(this).load(R.drawable.city_street_img).centerCrop().into(main_IMG_background_right_road);
         rightArrow.setOnClickListener(v -> shiftCarRight());
 
         leftArrow.setOnClickListener(v -> shiftCarLeft());
