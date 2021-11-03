@@ -4,8 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.BounceInterpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView leftCar;
     private ImageView centerCar;
     private ImageView rightCar;
+    private ImageView main_IMG_background;
 
 
     @Override
@@ -37,22 +42,15 @@ public class MainActivity extends AppCompatActivity {
         leftCar = findViewById(R.id.leftCar);
         centerCar = findViewById(R.id.centerCar);
         rightCar = findViewById(R.id.rightCar);
+        main_IMG_background = findViewById(R.id.main_IMG_background);
     }
 
     private void initViews() {
-        rightArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shiftCarRight();
-            }
-        });
+        Glide.with(this).load(R.drawable.city_street).centerCrop().into(main_IMG_background);
 
-        leftArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shiftCarLeft();
-            }
-        });
+        rightArrow.setOnClickListener(v -> shiftCarRight());
+
+        leftArrow.setOnClickListener(v -> shiftCarLeft());
     }
 
     private void shiftCarLeft() {
