@@ -152,15 +152,15 @@
                 android:background="@null"
                 android:src="@drawable/right_arrow" />
 
-            <TextView
-                android:id="@+id/main_TXT_gameOver"
+            <Button
+                android:id="@+id/main_BTN_newGame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
-                android:text="@string/gameOver_msg"
-                android:textSize="40dp"
+                android:text="@string/newGame_msg"
+                android:textSize="30dp"
                 android:visibility="invisible" />
         </RelativeLayout>
     </LinearLayout>

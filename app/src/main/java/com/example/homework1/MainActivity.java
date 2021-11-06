@@ -4,11 +4,13 @@ package com.example.homework1;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView main_IMG_heart_1;
     private ImageView main_IMG_heart_2;
     private ImageView main_IMG_heart_3;
-    private TextView main_TXT_gameOver;
+    private Button main_BTN_newGame;
     private LinearLayout main_LAY_car;
 
     private GameManager gameManager;
@@ -70,17 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void start() {
         randomCreateSign();
-        scheduledFuture = new ScheduledThreadPoolExecutor(5).scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        randomMove();
-                    }
-                });
-            }
-        }, TIME_INTERVAL, DELAY, TimeUnit.MILLISECONDS);
+        scheduledFuture = new ScheduledThreadPoolExecutor(5).scheduleWithFixedDelay(() -> runOnUiThread(this::randomMove), TIME_INTERVAL, DELAY, TimeUnit.MILLISECONDS);
     }
 
     private void stop() {
@@ -100,14 +92,15 @@ public class MainActivity extends AppCompatActivity {
         main_IMG_heart_1 = findViewById(R.id.main_IMG_heart_1);
         main_IMG_heart_2 = findViewById(R.id.main_IMG_heart_2);
         main_IMG_heart_3 = findViewById(R.id.main_IMG_heart_3);
-        main_TXT_gameOver = findViewById(R.id.main_TXT_gameOver);
+        main_BTN_newGame = findViewById(R.id.main_BTN_newGame);
     }
 
     private void initViews() {
         main_BTN_right.setOnClickListener(v -> shiftCarRight());
-
+        main_BTN_newGame.setOnClickListener(v->newGame());
         main_BTN_left.setOnClickListener(v -> shiftCarLeft());
     }
+
 
     private void shiftCarLeft() {
         if (gameManager.isGameOver())
@@ -147,17 +140,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void newGame() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
     private void randomCreateSign() {
         gameManager.generateSignNumber();
+        float randomY = (float)(Math.random() * 400 + 50);
         switch (gameManager.getRandomSignNumber()) {
             case 0:
-                main_IMG_sign_left.setVisibility(View.VISIBLE);
+                main_IMG_sign_center.setVisibility(View.VISIBLE);
+                main_IMG_sign_right.setVisibility(View.VISIBLE);
+                main_IMG_sign_right.setY(main_IMG_sign_right.getY() - randomY);
                 break;
             case 1:
-                main_IMG_sign_center.setVisibility(View.VISIBLE);
+                main_IMG_sign_right.setVisibility(View.VISIBLE);
+                main_IMG_sign_left.setVisibility(View.VISIBLE);
+                main_IMG_sign_left.setY(main_IMG_sign_left.getY() - randomY);
                 break;
             case 2:
-                main_IMG_sign_right.setVisibility(View.VISIBLE);
+                main_IMG_sign_left.setVisibility(View.VISIBLE);
+                main_IMG_sign_center.setVisibility(View.VISIBLE);
+                main_IMG_sign_center.setY(main_IMG_sign_center.getY() - randomY);
                 break;
             default:
                 break;
@@ -167,29 +173,37 @@ public class MainActivity extends AppCompatActivity {
     private void randomMove() {
         switch (gameManager.getRandomSignNumber()) {
             case 0:
-                moveSign(main_IMG_sign_left);
+                moveSign(main_IMG_sign_center,main_IMG_sign_right);
                 break;
             case 1:
-                moveSign(main_IMG_sign_center);
+                moveSign(main_IMG_sign_right,main_IMG_sign_left);
                 break;
             case 2:
-                moveSign(main_IMG_sign_right);
+                moveSign(main_IMG_sign_left,main_IMG_sign_center);
                 break;
         }
 
     }
 
-    private void moveSign(ImageView imgView) {
-        imgView.setY(imgView.getY() + 1);
-        if (main_LAY_car.getY() < imgView.getY() + imgView.getHeight()) {
-            imgView.setVisibility(View.INVISIBLE);
-            imgView.setY(0);
-            checkCrash();
+    private void moveSign(ImageView imgViewFirst,ImageView imgViewSecond) {
+        imgViewFirst.setY(imgViewFirst.getY() + 1);
+        imgViewSecond.setY(imgViewSecond.getY() + 1);
+
+        if (main_LAY_car.getY() < imgViewFirst.getY() + imgViewFirst.getHeight()) {
+            imgViewFirst.setVisibility(View.INVISIBLE);
+            imgViewFirst.setY(0);
+            checkCrash(false);
+
+        }
+        if (main_LAY_car.getY() < imgViewSecond.getY() + imgViewSecond.getHeight()) {
+            imgViewSecond.setVisibility(View.INVISIBLE);
+            imgViewSecond.setY(0);
+            checkCrash(true);
 
         }
     }
 
-    private void checkCrash() {
+    private void checkCrash(boolean secondSignArrived) {
         if (gameManager.checkCrash()) {
             if (gameManager.getNumberOfHearts() != 0) {
                 toast(getString(R.string.toast_msg));
@@ -209,7 +223,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-        randomCreateSign();
+        if(secondSignArrived)
+            randomCreateSign();
 
     }
 
@@ -229,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void gameover() {
-        main_TXT_gameOver.setVisibility(View.VISIBLE);
+        main_BTN_newGame.setVisibility(View.VISIBLE);
         stop();
     }
 

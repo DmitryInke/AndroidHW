@@ -50,7 +50,7 @@ public class GameManager {
     }
 
     public boolean checkCrash() {
-        if (CarPosition.values()[randomSignNumber] == currentPos) {
+        if (CarPosition.values()[randomSignNumber] != currentPos) {
             numberOfHearts--;
             return true;
         }
