@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HomeWork1</string>
+    <string name="app_name">RACE</string>
     <string name="newGame_msg">New Game</string>
     <string name="toast_msg">You crashed into an obstacle</string>
 </resources>
