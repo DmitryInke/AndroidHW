@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.homework1.Constants.Constants;
+import com.example.homework1.Interfaces.Constants;
 import com.example.homework1.Models.GameManager;
 import com.example.homework1.R;
 
@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Constants {
 
     private ImageButton main_BTN_right;
     private ImageButton main_BTN_left;
@@ -64,13 +64,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         stop();
-
     }
 
     private void start() {
         randomCreateSign();
-        scheduledFuture = new ScheduledThreadPoolExecutor(Constants.CORE_POOL_SIZE).scheduleWithFixedDelay(() -> runOnUiThread(this::moveSign),
-                Constants.TIME_INTERVAL, Constants.DELAY, TimeUnit.MILLISECONDS);
+        scheduledFuture = new ScheduledThreadPoolExecutor(CORE_POOL_SIZE).scheduleWithFixedDelay(() -> runOnUiThread(this::moveSign),
+                TIME_INTERVAL, DELAY, TimeUnit.MILLISECONDS);
     }
 
     private void stop() {
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         main_IMG_right_Car = findViewById(R.id.main_IMG_right_Car);
         main_IMG_sign_arr = new ImageView[]{findViewById(R.id.main_IMG_sign_left), findViewById(R.id.main_IMG_sign_center),
                 findViewById(R.id.main_IMG_sign_right)};
-
 
         main_LAY_car = findViewById(R.id.main_LAY_car);
 
@@ -105,15 +103,15 @@ public class MainActivity extends AppCompatActivity {
     private void shiftCarLeft() {
         if (gameManager.shiftCarLeft()) {
             switch (gameManager.getCurrentPos()) {
-                case Constants.LEFT_ROAD:
+                case LEFT_ROAD:
                     main_IMG_center_Car.setVisibility(View.INVISIBLE);
                     main_IMG_left_Car.setVisibility(View.VISIBLE);
                     break;
-                case Constants.CENTER_ROAD:
+                case CENTER_ROAD:
                     main_IMG_right_Car.setVisibility(View.INVISIBLE);
                     main_IMG_center_Car.setVisibility(View.VISIBLE);
                     break;
-                case Constants.RIGHT_ROAD:
+                case RIGHT_ROAD:
                     break;
             }
         }
@@ -122,13 +120,13 @@ public class MainActivity extends AppCompatActivity {
     private void shiftCarRight() {
         if (gameManager.shiftCarRight()) {
             switch (gameManager.getCurrentPos()) {
-                case Constants.LEFT_ROAD:
+                case LEFT_ROAD:
                     break;
-                case Constants.CENTER_ROAD:
+                case CENTER_ROAD:
                     main_IMG_center_Car.setVisibility(View.VISIBLE);
                     main_IMG_left_Car.setVisibility(View.INVISIBLE);
                     break;
-                case Constants.RIGHT_ROAD:
+                case RIGHT_ROAD:
                     main_IMG_center_Car.setVisibility(View.INVISIBLE);
                     main_IMG_right_Car.setVisibility(View.VISIBLE);
                     break;
@@ -146,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         gameManager.randomSignOnRoads();
         for (int i = 0; i < main_IMG_sign_arr.length; i++) {
             if (gameManager.getRoadsArr()[i]) {
-                main_IMG_sign_arr[i].setY(main_IMG_sign_arr[i].getY() - (float) (Math.random() * Constants.HIGH_Y + Constants.LOW_Y));
+                main_IMG_sign_arr[i].setY(main_IMG_sign_arr[i].getY() - (float) (Math.random() * HIGH_Y + LOW_Y));
                 main_IMG_sign_arr[i].setVisibility(View.VISIBLE);
             }
         }
@@ -156,12 +154,11 @@ public class MainActivity extends AppCompatActivity {
     private void moveSign() {
         for (int i = 0; i < main_IMG_sign_arr.length; i++) {
             if (gameManager.getRoadsArr()[i]) {
-                main_IMG_sign_arr[i].setY(main_IMG_sign_arr[i].getY() + Constants.DELTA_Y);
+                main_IMG_sign_arr[i].setY(main_IMG_sign_arr[i].getY() + DELTA_Y);
                 checkCrash(main_IMG_sign_arr[i].getY() + main_IMG_sign_arr[i].getHeight(), main_LAY_car.getY(), i);
             }
         }
     }
-
 
     private void checkCrash(float signPositionY, float carPositionY, int roadIndex) {
         if (signPositionY > carPositionY) {
@@ -174,14 +171,14 @@ public class MainActivity extends AppCompatActivity {
                 vibrate();
 
                 switch (gameManager.getNumberOfHearts()) {
-                    case Constants.LEFT_ROAD:
+                    case LEFT_ROAD:
                         main_IMG_heart_1.setVisibility(View.INVISIBLE);
                         gameOver();
                         break;
-                    case Constants.CENTER_ROAD:
+                    case CENTER_ROAD:
                         main_IMG_heart_2.setVisibility(View.INVISIBLE);
                         break;
-                    case Constants.RIGHT_ROAD:
+                    case RIGHT_ROAD:
                         main_IMG_heart_3.setVisibility(View.INVISIBLE);
                         break;
                 }
@@ -195,10 +192,10 @@ public class MainActivity extends AppCompatActivity {
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(Constants.VIBRATE_TIME, VibrationEffect.DEFAULT_AMPLITUDE));
+            v.vibrate(VibrationEffect.createOneShot(VIBRATE_TIME, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             //deprecated in API 26
-            v.vibrate(Constants.VIBRATE_TIME);
+            v.vibrate(VIBRATE_TIME);
         }
     }
 

@@ -1,17 +1,17 @@
 package com.example.homework1.Models;
 
-import com.example.homework1.Constants.Constants;
+import com.example.homework1.Interfaces.Constants;
 
-public class GameManager {
+public class GameManager implements Constants {
 
     private int numberOfHearts;
     private boolean[] roadsArr;
     private int currentPos;
 
     public GameManager() {
-        this.numberOfHearts = Constants.NUMBER_OF_HEARTS;
-        this.currentPos = Constants.CENTER_ROAD;
-        this.roadsArr = new boolean[Constants.NUMBER_OF_ROADS];
+        this.numberOfHearts = NUMBER_OF_HEARTS;
+        this.currentPos = CENTER_ROAD;
+        this.roadsArr = new boolean[NUMBER_OF_ROADS];
         randomSignOnRoads();
     }
 
@@ -43,14 +43,14 @@ public class GameManager {
     }
 
     public void randomSignOnRoads() {
-        int randomSign = !isGameOver() ? (int) (Math.random() * Constants.NUMBER_OF_ROADS) : Constants.ERROR;
+        int randomSign = !isGameOver() ? (int) (Math.random() * NUMBER_OF_ROADS) : ERROR;
         for (int i = 0; i < roadsArr.length; i++) {
             roadsArr[i] = randomSign != i;
         }
     }
 
     public boolean shiftCarLeft() {
-        if (!isGameOver() && this.currentPos > Constants.LEFT_ROAD) {
+        if (!isGameOver() && this.currentPos > LEFT_ROAD) {
             this.currentPos--;
             return true;
         }
@@ -58,7 +58,7 @@ public class GameManager {
     }
 
     public boolean shiftCarRight() {
-        if (!isGameOver() && this.currentPos < Constants.RIGHT_ROAD) {
+        if (!isGameOver() && this.currentPos < RIGHT_ROAD) {
             this.currentPos++;
             return true;
         }
@@ -66,7 +66,7 @@ public class GameManager {
     }
 
     public boolean isAllFalse() {
-        for(int i = 0; i < this.roadsArr.length; i++) {
+        for (int i = 0; i < this.roadsArr.length; i++) {
             if (roadsArr[i])
                 return false;
         }
