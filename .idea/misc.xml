@@ -3,16 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable-v24/distance_counter.xml" value="0.2916666666666667" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/car.xml" value="0.3141025641025641" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/city_street.xml" value="0.33" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/citystreet.xml" value="0.3828125" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/coins.xml" value="0.197008547008547" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/heart.xml" value="0.27037037037037037" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/left_arrow.xml" value="0.15683760683760684" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/left_arrow_svgrepo_com.xml" value="0.3828125" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/right_arrow.xml" value="0.2858974358974359" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/right_arrow_svgrepo_com.xml" value="0.22870370370370371" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/road_barrier.xml" value="0.27037037037037037" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/road_sign.xml" value="0.20042735042735044" />
-        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/layout/activity_main.xml" value="0.26313405797101447" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/layout/activity_main.xml" value="0.25" />
       </map>
     </option>
   </component>
