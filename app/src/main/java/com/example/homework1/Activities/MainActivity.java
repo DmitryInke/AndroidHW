@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
@@ -54,6 +55,10 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private ScheduledFuture<?> scheduledFuture;
 
     private Handler timerHandler = new Handler();
+    MediaPlayer crashSound;
+    MediaPlayer coinSound;
+    MediaPlayer gameOverSound;
+
     private long startTime = 0;
 
 
@@ -63,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements Constants {
         setContentView(R.layout.activity_main);
         findViews();
         initViews();
+        crashSound = MediaPlayer.create(this, R.raw.car_crash);
+        coinSound = MediaPlayer.create(this, R.raw.coin_pick);
+        gameOverSound = MediaPlayer.create(this, R.raw.game_over);
         gameManager = new GameManager();
         startTime = System.currentTimeMillis();
         timerHandler.postDelayed(distanceCounter, 0);
@@ -85,8 +93,8 @@ public class MainActivity extends AppCompatActivity implements Constants {
         @Override
         public void run() {
             long millis = System.currentTimeMillis() - startTime;
-            gameManager.setDistance((int) (millis / TIME_MILLIS_DELAY)-OFFSET_TIME) ;
-            if(gameManager.getDistance() >0)
+            gameManager.setDistance((int) (millis / TIME_MILLIS_DELAY) - OFFSET_TIME);
+            if (gameManager.getDistance() > 0)
                 main_Text_distance_counter.setText(gameManager.getDistance() + " m");
             timerHandler.postDelayed(this, TIME_MILLIS_DELAY);
         }
@@ -184,9 +192,9 @@ public class MainActivity extends AppCompatActivity implements Constants {
     }
 
     private void newGame() {
-        Intent intent = getIntent();
-        finish();
+        Intent intent = new Intent(this, GameMenuActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void randomCreateSign() {
@@ -216,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
             main_IMG_sign_arr[roadIndex].setY(0);
             main_IMG_sign_arr[roadIndex].setImageResource(R.drawable.road_sign);
 
-            if (gameManager.checkCrash(roadIndex)) {
+            if (gameManager.checkCrash(roadIndex,crashSound,coinSound)) {
 
                 toast(getString(R.string.toast_msg));
                 vibrate();
@@ -259,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
 
     private void gameOver() {
         main_BTN_newGame.setVisibility(View.VISIBLE);
+        gameOverSound.start();
         stop();
     }
 

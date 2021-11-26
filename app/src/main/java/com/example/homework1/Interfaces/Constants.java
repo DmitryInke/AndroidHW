@@ -15,12 +15,13 @@ public interface Constants {
     int TIME_INTERVAL = 2000;
     int TIME_MILLIS_DELAY = 500;
     int OFFSET_TIME = 4;
-    int OFFSET_Y = 100;
     int DELAY = 1;
     int VIBRATE_TIME = 500;
     int CORE_POOL_SIZE = 5;
     int HIGH_Y = 400;
     int LOW_Y = 50;
     int DELTA_Y = 1;
-    int COIN = 777;
+    int ANIM_DUR = 3000;
+    String SENSOR_TYPE = "SENSOR_TYPE";
+    String NAME = "NAME";
 }

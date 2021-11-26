@@ -11,7 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HomeWork1">
         <activity
+            android:name=".Activities.GameMenuActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.MainActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".Activities.GameSplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

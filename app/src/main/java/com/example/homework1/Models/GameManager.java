@@ -1,5 +1,6 @@
 package com.example.homework1.Models;
 
+import android.media.MediaPlayer;
 import android.util.Log;
 
 import com.example.homework1.Interfaces.Constants;
@@ -113,15 +114,16 @@ public class GameManager implements Constants {
         return true;
     }
 
-    public boolean checkCrash(int roadIndex) {
+    public boolean checkCrash(int roadIndex, MediaPlayer crashSound, MediaPlayer coinSound) {
         this.roadsArr[roadIndex] = false;
         if(currentPos == randomCoin && currentPos == roadIndex){
             this.coin++;
-            Log.d("kaki", "Coin:" + this.coin);
+            coinSound.start();
             return false;
         }
         if (roadIndex == currentPos) {
             numberOfHearts--;
+            crashSound.start();
             return true;
         }
         return false;
