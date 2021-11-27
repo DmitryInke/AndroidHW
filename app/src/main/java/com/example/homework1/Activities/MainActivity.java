@@ -22,14 +22,17 @@ import android.widget.Toast;
 
 import com.example.homework1.Interfaces.Constants;
 import com.example.homework1.Models.GameManager;
+import com.example.homework1.Models.MyPosition;
+import com.example.homework1.Models.TopTen;
 import com.example.homework1.R;
+import com.example.homework1.utils.SP;
+import com.google.gson.Gson;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements Constants {
-
     private ImageButton main_BTN_right;
     private ImageButton main_BTN_left;
     private Button main_BTN_newGame;
@@ -59,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements Constants {
     MediaPlayer coinSound;
     MediaPlayer gameOverSound;
 
+    private SP sp;
+    private Gson gson;
+    private MyPosition myPosition;
+
     private long startTime = 0;
 
 
@@ -66,12 +73,22 @@ public class MainActivity extends AppCompatActivity implements Constants {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        gson = new Gson();
+        sp = SP.getInstance();
+        TopTen topTen = null;
+        String ttJson = SP.getInstance().getString(SP.KEY_TOP_TEN, "NA");
+        if (!ttJson.equals("NA")) {
+            topTen = new Gson().fromJson(ttJson, TopTen.class);
+        }
+        String locationJsonFromMainMenuActivity = getIntent().getStringExtra(EXTRA_KEY_GAME);
+        myPosition = new Gson().fromJson(locationJsonFromMainMenuActivity, MyPosition.class);
+
         findViews();
         initViews();
         crashSound = MediaPlayer.create(this, R.raw.car_crash);
         coinSound = MediaPlayer.create(this, R.raw.coin_pick);
         gameOverSound = MediaPlayer.create(this, R.raw.game_over);
-        gameManager = new GameManager();
+        gameManager = new GameManager(topTen, myPosition);
         startTime = System.currentTimeMillis();
         timerHandler.postDelayed(distanceCounter, 0);
     }
@@ -224,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
             main_IMG_sign_arr[roadIndex].setY(0);
             main_IMG_sign_arr[roadIndex].setImageResource(R.drawable.road_sign);
 
-            if (gameManager.checkCrash(roadIndex,crashSound,coinSound)) {
+            if (gameManager.checkCrash(roadIndex, crashSound, coinSound)) {
 
                 toast(getString(R.string.toast_msg));
                 vibrate();
@@ -267,6 +284,8 @@ public class MainActivity extends AppCompatActivity implements Constants {
 
     private void gameOver() {
         main_BTN_newGame.setVisibility(View.VISIBLE);
+        gameManager.addToTopTen();
+        sp.putString(SP.KEY_TOP_TEN, gson.toJson(gameManager.getTopTen()));
         gameOverSound.start();
         stop();
     }

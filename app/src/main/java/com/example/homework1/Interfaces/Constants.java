@@ -24,4 +24,8 @@ public interface Constants {
     int ANIM_DUR = 3000;
     String SENSOR_TYPE = "SENSOR_TYPE";
     String NAME = "NAME";
+    String SP_FILE = "MY_SP";
+    int LOCATION_REQUEST_CODE = 10001;
+    String EXTRA_KEY_GAME = "EXTRA_KEY_GAME";
+    String KEY_TOP_TEN = "KEY_TOP_TEN";
 }
