@@ -4,6 +4,8 @@ import android.media.MediaPlayer;
 import android.util.Log;
 
 import com.example.homework1.Interfaces.Constants;
+import com.example.homework1.R;
+import com.example.homework1.utils.MusicPlayer;
 
 import java.util.ArrayList;
 
@@ -17,19 +19,23 @@ public class GameManager implements Constants {
     private int randomCoin;
     private TopTen topTen;
     private MyPosition myPosition;
+    private float currentX;
+    private MusicPlayer mp;
 
     public GameManager() {
 
     }
 
-    public GameManager(TopTen topTen, MyPosition thePosition) {
+    public GameManager(TopTen topTen, MyPosition thePosition, float currentX, MusicPlayer mp) {
         this.numberOfHearts = NUMBER_OF_HEARTS;
         this.currentPos = THIRD_ROAD;
         this.roadsArr = new boolean[NUMBER_OF_ROADS];
         this.distance = 0;
         this.coin = 0;
         this.randomCoin = 0;
-        myPosition = thePosition;
+        this.mp = mp;
+        this.currentX = currentX;
+        this.myPosition = thePosition;
         this.topTen = topTen;
         if (this.topTen == null) {
             this.topTen = new TopTen();
@@ -65,6 +71,15 @@ public class GameManager implements Constants {
 
     public int getCurrentPos() {
         return currentPos;
+    }
+
+    public float getCurrentX() {
+        return currentX;
+    }
+
+    public GameManager setCurrentX(float currentX) {
+        this.currentX = currentX;
+        return this;
     }
 
     public int getDistance() {
@@ -174,16 +189,16 @@ public class GameManager implements Constants {
         return true;
     }
 
-    public boolean checkCrash(int roadIndex, MediaPlayer crashSound, MediaPlayer coinSound) {
+    public boolean checkCrash(int roadIndex) {
         this.roadsArr[roadIndex] = false;
         if(currentPos == randomCoin && currentPos == roadIndex){
             this.coin++;
-            coinSound.start();
+            mp.playSound(R.raw.coin_pick);
             return false;
         }
         if (roadIndex == currentPos) {
             numberOfHearts--;
-            crashSound.start();
+            mp.playSound(R.raw.car_crash);
             return true;
         }
         return false;

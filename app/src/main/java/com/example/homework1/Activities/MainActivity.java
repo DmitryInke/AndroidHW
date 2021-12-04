@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -25,9 +28,11 @@ import com.example.homework1.Models.GameManager;
 import com.example.homework1.Models.MyPosition;
 import com.example.homework1.Models.TopTen;
 import com.example.homework1.R;
+import com.example.homework1.utils.MusicPlayer;
 import com.example.homework1.utils.SP;
 import com.google.gson.Gson;
 
+import java.text.DecimalFormat;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -37,14 +42,8 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private ImageButton main_BTN_left;
     private Button main_BTN_newGame;
 
-    private ImageView main_IMG_first_Car;
-    private ImageView main_IMG_second_Car;
-    private ImageView main_IMG_third_Car;
-    private ImageView main_IMG_fourth_Car;
-    private ImageView main_IMG_fifth_Car;
-    private ImageView main_IMG_heart_1;
-    private ImageView main_IMG_heart_2;
-    private ImageView main_IMG_heart_3;
+    private ImageView[] main_IMG_car_arr;
+    private ImageView[] main_IMG_heart_arr;
     private ImageView[] main_IMG_sign_arr;
 
     private TextView main_Text_distance_counter;
@@ -58,15 +57,19 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private ScheduledFuture<?> scheduledFuture;
 
     private Handler timerHandler = new Handler();
-    MediaPlayer crashSound;
-    MediaPlayer coinSound;
-    MediaPlayer gameOverSound;
 
+    private MusicPlayer mp;
     private SP sp;
     private Gson gson;
     private MyPosition myPosition;
+    private float startPosX;
 
     private long startTime = 0;
+
+
+    private SensorManager sensorManager;
+    private Sensor sensor;
+    String sensorType;
 
 
     @Override
@@ -75,20 +78,22 @@ public class MainActivity extends AppCompatActivity implements Constants {
         setContentView(R.layout.activity_main);
         gson = new Gson();
         sp = SP.getInstance();
+        mp = new MusicPlayer(this);
         TopTen topTen = null;
         String ttJson = SP.getInstance().getString(SP.KEY_TOP_TEN, "NA");
         if (!ttJson.equals("NA")) {
             topTen = new Gson().fromJson(ttJson, TopTen.class);
         }
-        String locationJsonFromMainMenuActivity = getIntent().getStringExtra(EXTRA_KEY_GAME);
+        String locationJsonFromMainMenuActivity = getIntent().getBundleExtra("bundle").getString(EXTRA_KEY_GAME);
         myPosition = new Gson().fromJson(locationJsonFromMainMenuActivity, MyPosition.class);
+        sensorType = getIntent().getBundleExtra("bundle").getString(SENSOR_TYPE);
 
+        if (!sensorType.equals("LIGHT")) {
+            initSensor();
+        }
         findViews();
         initViews();
-        crashSound = MediaPlayer.create(this, R.raw.car_crash);
-        coinSound = MediaPlayer.create(this, R.raw.coin_pick);
-        gameOverSound = MediaPlayer.create(this, R.raw.game_over);
-        gameManager = new GameManager(topTen, myPosition);
+        gameManager = new GameManager(topTen, myPosition, startPosX, mp);
         startTime = System.currentTimeMillis();
         timerHandler.postDelayed(distanceCounter, 0);
     }
@@ -104,6 +109,52 @@ public class MainActivity extends AppCompatActivity implements Constants {
     protected void onStop() {
         super.onStop();
         stop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sensorManager != null)
+            sensorManager.registerListener(accSensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (sensorManager != null)
+            sensorManager.unregisterListener(accSensorEventListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mp.releaseIfNotFinished();
+    }
+
+    private void initSensor() {
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+    private SensorEventListener accSensorEventListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            DecimalFormat df = new DecimalFormat("##.##");
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+            startPosX = x;
+            shiftCarAcc(x);
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
+
+    public boolean isSensorExists(int sensorType) {
+        return (sensorManager.getDefaultSensor(sensorType) != null);
     }
 
     private Runnable distanceCounter = new Runnable() {
@@ -129,22 +180,25 @@ public class MainActivity extends AppCompatActivity implements Constants {
         timerHandler.removeCallbacks(distanceCounter);
     }
 
+
     private void findViews() {
         main_BTN_right = findViewById(R.id.main_BTN_right);
         main_BTN_left = findViewById(R.id.main_BTN_left);
-        main_IMG_first_Car = findViewById(R.id.main_IMG_first_Car);
-        main_IMG_second_Car = findViewById(R.id.main_IMG_second_Car);
-        main_IMG_third_Car = findViewById(R.id.main_IMG_third_Car);
-        main_IMG_fourth_Car = findViewById(R.id.main_IMG_fourth_Car);
-        main_IMG_fifth_Car = findViewById(R.id.main_IMG_fifth_Car);
+        if (sensorType.equals("ACC")) {
+            main_BTN_right.setVisibility(View.INVISIBLE);
+            main_BTN_left.setVisibility(View.INVISIBLE);
+        }
+        main_IMG_car_arr = new ImageView[]{findViewById(R.id.main_IMG_first_Car), findViewById(R.id.main_IMG_second_Car),
+                findViewById(R.id.main_IMG_third_Car), findViewById(R.id.main_IMG_fourth_Car),
+                findViewById(R.id.main_IMG_fifth_Car)};
+
         main_IMG_sign_arr = new ImageView[]{findViewById(R.id.main_IMG_sign_first), findViewById(R.id.main_IMG_sign_second),
                 findViewById(R.id.main_IMG_sign_third), findViewById(R.id.main_IMG_sign_fourth), findViewById(R.id.main_IMG_sign_fifth)};
 
+        main_IMG_heart_arr = new ImageView[]{findViewById(R.id.main_IMG_heart_1), findViewById(R.id.main_IMG_heart_2),
+                findViewById(R.id.main_IMG_heart_3)};
         main_LAY_car = findViewById(R.id.main_LAY_car);
 
-        main_IMG_heart_1 = findViewById(R.id.main_IMG_heart_1);
-        main_IMG_heart_2 = findViewById(R.id.main_IMG_heart_2);
-        main_IMG_heart_3 = findViewById(R.id.main_IMG_heart_3);
         main_BTN_newGame = findViewById(R.id.main_BTN_newGame);
 
         main_Text_distance_counter = findViewById(R.id.main_Text_distance_counter);
@@ -162,20 +216,20 @@ public class MainActivity extends AppCompatActivity implements Constants {
         if (gameManager.shiftCarLeft()) {
             switch (gameManager.getCurrentPos()) {
                 case FIRST_ROAD:
-                    main_IMG_second_Car.setVisibility(View.INVISIBLE);
-                    main_IMG_first_Car.setVisibility(View.VISIBLE);
+                    main_IMG_car_arr[SECOND_ROAD].setVisibility(View.INVISIBLE);
+                    main_IMG_car_arr[FIRST_ROAD].setVisibility(View.VISIBLE);
                     break;
                 case SECOND_ROAD:
-                    main_IMG_third_Car.setVisibility(View.INVISIBLE);
-                    main_IMG_second_Car.setVisibility(View.VISIBLE);
+                    main_IMG_car_arr[THIRD_ROAD].setVisibility(View.INVISIBLE);
+                    main_IMG_car_arr[SECOND_ROAD].setVisibility(View.VISIBLE);
                     break;
                 case THIRD_ROAD:
-                    main_IMG_fourth_Car.setVisibility(View.INVISIBLE);
-                    main_IMG_third_Car.setVisibility(View.VISIBLE);
+                    main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.INVISIBLE);
+                    main_IMG_car_arr[THIRD_ROAD].setVisibility(View.VISIBLE);
                     break;
                 case FOURTH_ROAD:
-                    main_IMG_fifth_Car.setVisibility(View.INVISIBLE);
-                    main_IMG_fourth_Car.setVisibility(View.VISIBLE);
+                    main_IMG_car_arr[FIFTH_ROAD].setVisibility(View.INVISIBLE);
+                    main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.VISIBLE);
                     break;
                 case FIFTH_ROAD:
                     break;
@@ -189,24 +243,63 @@ public class MainActivity extends AppCompatActivity implements Constants {
                 case FIRST_ROAD:
                     break;
                 case SECOND_ROAD:
-                    main_IMG_second_Car.setVisibility(View.VISIBLE);
-                    main_IMG_first_Car.setVisibility(View.INVISIBLE);
+                    main_IMG_car_arr[SECOND_ROAD].setVisibility(View.VISIBLE);
+                    main_IMG_car_arr[FIRST_ROAD].setVisibility(View.INVISIBLE);
                     break;
                 case THIRD_ROAD:
-                    main_IMG_second_Car.setVisibility(View.INVISIBLE);
-                    main_IMG_third_Car.setVisibility(View.VISIBLE);
+                    main_IMG_car_arr[SECOND_ROAD].setVisibility(View.INVISIBLE);
+                    main_IMG_car_arr[THIRD_ROAD].setVisibility(View.VISIBLE);
                     break;
                 case FOURTH_ROAD:
-                    main_IMG_third_Car.setVisibility(View.INVISIBLE);
-                    main_IMG_fourth_Car.setVisibility(View.VISIBLE);
+                    main_IMG_car_arr[THIRD_ROAD].setVisibility(View.INVISIBLE);
+                    main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.VISIBLE);
                     break;
                 case FIFTH_ROAD:
-                    main_IMG_fourth_Car.setVisibility(View.INVISIBLE);
-                    main_IMG_fifth_Car.setVisibility(View.VISIBLE);
+                    main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.INVISIBLE);
+                    main_IMG_car_arr[FIFTH_ROAD].setVisibility(View.VISIBLE);
                     break;
             }
         }
     }
+
+    private void shiftCarAcc(float x) {
+        if (gameManager.getCurrentX() <= 0 && x <= -2.5 * FACTOR && x > -5 * FACTOR) {
+            gameManager.setCurrentX(x);
+            gameManager.setCurrentPos(FOURTH_ROAD);
+            main_IMG_car_arr[THIRD_ROAD].setVisibility(View.INVISIBLE);
+            main_IMG_car_arr[FIFTH_ROAD].setVisibility(View.INVISIBLE);
+            main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.VISIBLE);
+        }
+        if (gameManager.getCurrentX() <= -2.5 * FACTOR && x < -5 * FACTOR) {
+            gameManager.setCurrentX(x);
+            gameManager.setCurrentPos(FIFTH_ROAD);
+            main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.INVISIBLE);
+            main_IMG_car_arr[FIFTH_ROAD].setVisibility(View.VISIBLE);
+
+        }
+        if (gameManager.getCurrentX() < 5 * FACTOR && gameManager.getCurrentX() > -5 * FACTOR && x > -2.5 * FACTOR && x < 2.5 * FACTOR) {
+            gameManager.setCurrentX(x);
+            gameManager.setCurrentPos(THIRD_ROAD);
+            main_IMG_car_arr[SECOND_ROAD].setVisibility(View.INVISIBLE);
+            main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.INVISIBLE);
+            main_IMG_car_arr[THIRD_ROAD].setVisibility(View.VISIBLE);
+        }
+        if (gameManager.getCurrentX() > -2.5 * FACTOR && x >= 2.5 * FACTOR && x < 5 * FACTOR) {
+            gameManager.setCurrentX(x);
+            gameManager.setCurrentPos(SECOND_ROAD);
+            main_IMG_car_arr[FIRST_ROAD].setVisibility(View.INVISIBLE);
+            main_IMG_car_arr[THIRD_ROAD].setVisibility(View.INVISIBLE);
+            main_IMG_car_arr[SECOND_ROAD].setVisibility(View.VISIBLE);
+        }
+
+        if (gameManager.getCurrentX() >= 2.5 * FACTOR && x >= 5 * FACTOR) {
+            gameManager.setCurrentX(x);
+            gameManager.setCurrentPos(FIRST_ROAD);
+            main_IMG_car_arr[SECOND_ROAD].setVisibility(View.INVISIBLE);
+            main_IMG_car_arr[FIRST_ROAD].setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private void newGame() {
         Intent intent = new Intent(this, GameMenuActivity.class);
@@ -241,21 +334,21 @@ public class MainActivity extends AppCompatActivity implements Constants {
             main_IMG_sign_arr[roadIndex].setY(0);
             main_IMG_sign_arr[roadIndex].setImageResource(R.drawable.road_sign);
 
-            if (gameManager.checkCrash(roadIndex, crashSound, coinSound)) {
+            if (gameManager.checkCrash(roadIndex)) {
 
                 toast(getString(R.string.toast_msg));
                 vibrate();
 
                 switch (gameManager.getNumberOfHearts()) {
                     case FIRST_HEALTH:
-                        main_IMG_heart_1.setVisibility(View.INVISIBLE);
+                        main_IMG_heart_arr[FIRST_HEALTH].setVisibility(View.INVISIBLE);
                         gameOver();
                         break;
                     case SECOND_HEALTH:
-                        main_IMG_heart_2.setVisibility(View.INVISIBLE);
+                        main_IMG_heart_arr[SECOND_HEALTH].setVisibility(View.INVISIBLE);
                         break;
                     case THIRD_HEALTH:
-                        main_IMG_heart_3.setVisibility(View.INVISIBLE);
+                        main_IMG_heart_arr[THIRD_HEALTH].setVisibility(View.INVISIBLE);
                         break;
                 }
             }
@@ -283,10 +376,12 @@ public class MainActivity extends AppCompatActivity implements Constants {
     }
 
     private void gameOver() {
+        if (sensorManager != null)
+            sensorManager.unregisterListener(accSensorEventListener);
         main_BTN_newGame.setVisibility(View.VISIBLE);
         gameManager.addToTopTen();
         sp.putString(SP.KEY_TOP_TEN, gson.toJson(gameManager.getTopTen()));
-        gameOverSound.start();
+        mp.playSound(R.raw.game_over);
         stop();
     }
 

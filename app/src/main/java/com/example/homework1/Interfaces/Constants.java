@@ -22,10 +22,12 @@ public interface Constants {
     int LOW_Y = 50;
     int DELTA_Y = 1;
     int ANIM_DUR = 3000;
+    int LOCATION_REQUEST_CODE = 10001;
+    double FACTOR = 1.05;
     String SENSOR_TYPE = "SENSOR_TYPE";
     String NAME = "NAME";
     String SP_FILE = "MY_SP";
-    int LOCATION_REQUEST_CODE = 10001;
     String EXTRA_KEY_GAME = "EXTRA_KEY_GAME";
     String KEY_TOP_TEN = "KEY_TOP_TEN";
+
 }

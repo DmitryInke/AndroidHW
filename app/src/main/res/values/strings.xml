@@ -3,4 +3,7 @@
     <string name="newGame_msg">New Game</string>
     <string name="main_menu_msg">Start new game, choose your control mode!</string>
     <string name="toast_msg">You crashed into an obstacle</string>
+    <string name="accelerometer">Accelerometer</string>
+    <string name="light">Light</string>
+    <string name="top_ten">Top Ten</string>
 </resources>
