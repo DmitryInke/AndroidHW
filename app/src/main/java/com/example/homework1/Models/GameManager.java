@@ -1,8 +1,5 @@
 package com.example.homework1.Models;
 
-import android.media.MediaPlayer;
-import android.util.Log;
-
 import com.example.homework1.Interfaces.Constants;
 import com.example.homework1.R;
 import com.example.homework1.utils.MusicPlayer;
@@ -19,14 +16,15 @@ public class GameManager implements Constants {
     private int randomCoin;
     private TopTen topTen;
     private MyPosition myPosition;
-    private float currentX;
+    private float currentZ;
     private MusicPlayer mp;
+    private boolean flag;
 
     public GameManager() {
 
     }
 
-    public GameManager(TopTen topTen, MyPosition thePosition, float currentX, MusicPlayer mp) {
+    public GameManager(TopTen topTen, MyPosition thePosition, float currentZ, MusicPlayer mp) {
         this.numberOfHearts = NUMBER_OF_HEARTS;
         this.currentPos = THIRD_ROAD;
         this.roadsArr = new boolean[NUMBER_OF_ROADS];
@@ -34,9 +32,10 @@ public class GameManager implements Constants {
         this.coin = 0;
         this.randomCoin = 0;
         this.mp = mp;
-        this.currentX = currentX;
+        this.currentZ = currentZ;
         this.myPosition = thePosition;
         this.topTen = topTen;
+        this.flag = true;
         if (this.topTen == null) {
             this.topTen = new TopTen();
         }
@@ -73,12 +72,12 @@ public class GameManager implements Constants {
         return currentPos;
     }
 
-    public float getCurrentX() {
-        return currentX;
+    public float getCurrentZ() {
+        return currentZ;
     }
 
-    public GameManager setCurrentX(float currentX) {
-        this.currentX = currentX;
+    public GameManager setCurrentZ(float currentZ) {
+        this.currentZ = currentZ;
         return this;
     }
 
@@ -115,6 +114,7 @@ public class GameManager implements Constants {
     }
 
     public void addToTopTen() {
+        this.flag = true;
         if (topTen.getRecords().isEmpty()) { // TopTen list is empty
             addRecordToTopTen( 0);
         } else { // TopTen list is not empty
@@ -129,14 +129,14 @@ public class GameManager implements Constants {
                             records.remove(records.size() - 1);
                         }
                         addRecordToTopTen(i);
-                        break;
+                        this.flag=false;
                     }
                     if (i == records.size() - 1 && i < TopTen.MAX_IN_LIST) { // winner distance is the lowest, and there is room in the list
                         addRecordToTopTen(i + 1);
-                        break;
+                        this.flag=false;
                     }
                     i++;
-                } while (i < records.size());
+                } while (i < records.size() && this.flag);
             }
         }
 

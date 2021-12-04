@@ -8,7 +8,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -62,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private SP sp;
     private Gson gson;
     private MyPosition myPosition;
-    private float startPosX;
+    private float startPosZ;
 
     private long startTime = 0;
 
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
         }
         findViews();
         initViews();
-        gameManager = new GameManager(topTen, myPosition, startPosX, mp);
+        gameManager = new GameManager(topTen, myPosition, startPosZ, mp);
         startTime = System.currentTimeMillis();
         timerHandler.postDelayed(distanceCounter, 0);
     }
@@ -140,11 +139,9 @@ public class MainActivity extends AppCompatActivity implements Constants {
         @Override
         public void onSensorChanged(SensorEvent event) {
             DecimalFormat df = new DecimalFormat("##.##");
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
-            startPosX = x;
-            shiftCarAcc(x);
+            float z = event.values[0];
+            startPosZ = z;
+            shiftCarAcc(z);
         }
 
         @Override
@@ -262,38 +259,38 @@ public class MainActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private void shiftCarAcc(float x) {
-        if (gameManager.getCurrentX() <= 0 && x <= -2.5 * FACTOR && x > -5 * FACTOR) {
-            gameManager.setCurrentX(x);
+    private void shiftCarAcc(float z) {
+        if (gameManager.getCurrentZ() <= 0 && z <= -2.5 * FACTOR && z > -5 * FACTOR) {
+            gameManager.setCurrentZ(z);
             gameManager.setCurrentPos(FOURTH_ROAD);
             main_IMG_car_arr[THIRD_ROAD].setVisibility(View.INVISIBLE);
             main_IMG_car_arr[FIFTH_ROAD].setVisibility(View.INVISIBLE);
             main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.VISIBLE);
         }
-        if (gameManager.getCurrentX() <= -2.5 * FACTOR && x < -5 * FACTOR) {
-            gameManager.setCurrentX(x);
+        if (gameManager.getCurrentZ() <= -2.5 * FACTOR && z < -5 * FACTOR) {
+            gameManager.setCurrentZ(z);
             gameManager.setCurrentPos(FIFTH_ROAD);
             main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.INVISIBLE);
             main_IMG_car_arr[FIFTH_ROAD].setVisibility(View.VISIBLE);
 
         }
-        if (gameManager.getCurrentX() < 5 * FACTOR && gameManager.getCurrentX() > -5 * FACTOR && x > -2.5 * FACTOR && x < 2.5 * FACTOR) {
-            gameManager.setCurrentX(x);
+        if (gameManager.getCurrentZ() < 5 * FACTOR && gameManager.getCurrentZ() > -5 * FACTOR && z > -2.5 * FACTOR && z < 2.5 * FACTOR) {
+            gameManager.setCurrentZ(z);
             gameManager.setCurrentPos(THIRD_ROAD);
             main_IMG_car_arr[SECOND_ROAD].setVisibility(View.INVISIBLE);
             main_IMG_car_arr[FOURTH_ROAD].setVisibility(View.INVISIBLE);
             main_IMG_car_arr[THIRD_ROAD].setVisibility(View.VISIBLE);
         }
-        if (gameManager.getCurrentX() > -2.5 * FACTOR && x >= 2.5 * FACTOR && x < 5 * FACTOR) {
-            gameManager.setCurrentX(x);
+        if (gameManager.getCurrentZ() > -2.5 * FACTOR && z >= 2.5 * FACTOR && z < 5 * FACTOR) {
+            gameManager.setCurrentZ(z);
             gameManager.setCurrentPos(SECOND_ROAD);
             main_IMG_car_arr[FIRST_ROAD].setVisibility(View.INVISIBLE);
             main_IMG_car_arr[THIRD_ROAD].setVisibility(View.INVISIBLE);
             main_IMG_car_arr[SECOND_ROAD].setVisibility(View.VISIBLE);
         }
 
-        if (gameManager.getCurrentX() >= 2.5 * FACTOR && x >= 5 * FACTOR) {
-            gameManager.setCurrentX(x);
+        if (gameManager.getCurrentZ() >= 2.5 * FACTOR && z >= 5 * FACTOR) {
+            gameManager.setCurrentZ(z);
             gameManager.setCurrentPos(FIRST_ROAD);
             main_IMG_car_arr[SECOND_ROAD].setVisibility(View.INVISIBLE);
             main_IMG_car_arr[FIRST_ROAD].setVisibility(View.VISIBLE);
