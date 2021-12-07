@@ -82,7 +82,7 @@ public class GameMenuActivity extends AppCompatActivity implements Constants {
         bundle.putString(MainActivity.SENSOR_TYPE,sensor);
         bundle.putString(MainActivity.NAME,"sensor");
         bundle.putString(MainActivity.EXTRA_KEY_GAME, positionJson);
-        intent.putExtra("bundle",bundle);
+        intent.putExtra(getString(R.string.bundle),bundle);
         startActivity(intent);
         finish();
     }

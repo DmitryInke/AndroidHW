@@ -32,6 +32,9 @@
             android:name=".Activities.TopTenActivity"
             android:exported="false"/>
         <activity
+            android:name=".Activities.GameOverActivity"
+            android:exported="false"/>
+        <activity
             android:name=".Activities.MainActivity"
             android:exported="false"/>
         <activity

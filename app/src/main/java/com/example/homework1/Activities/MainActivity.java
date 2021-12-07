@@ -2,6 +2,7 @@ package com.example.homework1.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -39,7 +40,6 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity implements Constants {
     private ImageButton main_BTN_right;
     private ImageButton main_BTN_left;
-    private Button main_BTN_newGame;
 
     private ImageView[] main_IMG_car_arr;
     private ImageView[] main_IMG_heart_arr;
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
         if (!ttJson.equals("NA")) {
             topTen = new Gson().fromJson(ttJson, TopTen.class);
         }
-        String locationJsonFromMainMenuActivity = getIntent().getBundleExtra("bundle").getString(EXTRA_KEY_GAME);
+        String locationJsonFromMainMenuActivity = getIntent().getBundleExtra(getString(R.string.bundle)).getString(EXTRA_KEY_GAME);
         myPosition = new Gson().fromJson(locationJsonFromMainMenuActivity, MyPosition.class);
         sensorType = getIntent().getBundleExtra("bundle").getString(SENSOR_TYPE);
 
@@ -196,15 +196,12 @@ public class MainActivity extends AppCompatActivity implements Constants {
                 findViewById(R.id.main_IMG_heart_3)};
         main_LAY_car = findViewById(R.id.main_LAY_car);
 
-        main_BTN_newGame = findViewById(R.id.main_BTN_newGame);
-
         main_Text_distance_counter = findViewById(R.id.main_Text_distance_counter);
         main_Text_count_coins = findViewById(R.id.main_Text_count_coins);
     }
 
     private void initViews() {
         main_BTN_right.setOnClickListener(v -> shiftCarRight());
-        main_BTN_newGame.setOnClickListener(v -> newGame());
         main_BTN_left.setOnClickListener(v -> shiftCarLeft());
     }
 
@@ -297,12 +294,22 @@ public class MainActivity extends AppCompatActivity implements Constants {
         }
     }
 
+    private void openGameOverActivity(Activity activity) {
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            Intent myIntent = new Intent(activity, GameOverActivity.class);
+            Bundle bundle = new Bundle();
 
-    private void newGame() {
-        Intent intent = new Intent(this, GameMenuActivity.class);
-        startActivity(intent);
-        finish();
+            bundle.putString(GameOverActivity.EXTRA_KEY_DISTANCE,""+gameManager.getDistance());
+            bundle.putString(GameOverActivity.EXTRA_KEY_Score,""+gameManager.getCoin());
+            bundle.putString(GameOverActivity.EXTRA_KEY_TOP,""+gameManager.getCurrentTopPos());
+            myIntent.putExtra(getString(R.string.gameoverBundle),bundle);
+            startActivity(myIntent);
+            finish();
+        }, DELAY_ACTIVITY);
     }
+
+
 
     private void randomCreateSign() {
         gameManager.randomSignOnRoads();
@@ -375,10 +382,10 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private void gameOver() {
         if (sensorManager != null)
             sensorManager.unregisterListener(accSensorEventListener);
-        main_BTN_newGame.setVisibility(View.VISIBLE);
         gameManager.addToTopTen();
         sp.putString(SP.KEY_TOP_TEN, gson.toJson(gameManager.getTopTen()));
         mp.playSound(R.raw.game_over);
+        openGameOverActivity(MainActivity.this);
         stop();
     }
 

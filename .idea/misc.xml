@@ -10,6 +10,8 @@
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/city_street.xml" value="0.33" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/citystreet.xml" value="0.3828125" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/coins.xml" value="0.197008547008547" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/game_over.xml" value="0.2160337552742616" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/game_over_.xml" value="0.20811965811965813" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/heart.xml" value="0.27037037037037037" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2683544303797468" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/ic_launcher_background_custom.xml" value="0.310126582278481" />
@@ -21,6 +23,7 @@
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/road_barrier.xml" value="0.27037037037037037" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/drawable/road_sign.xml" value="0.20042735042735044" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/layout/acitivity_menu.xml" value="0.18717948717948718" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/layout/activity_game_over.xml" value="0.19487179487179487" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/layout/activity_menu.xml" value="0.1683760683760684" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/HomeWork1/app/src/main/res/layout/activity_splash.xml" value="0.18717948717948718" />

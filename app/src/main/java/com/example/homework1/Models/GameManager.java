@@ -14,6 +14,7 @@ public class GameManager implements Constants {
     private int distance;
     private int coin;
     private int randomCoin;
+    private int currentTopPos;
     private TopTen topTen;
     private MyPosition myPosition;
     private float currentZ;
@@ -31,6 +32,7 @@ public class GameManager implements Constants {
         this.distance = 0;
         this.coin = 0;
         this.randomCoin = 0;
+        this.currentTopPos = -1;
         this.mp = mp;
         this.currentZ = currentZ;
         this.myPosition = thePosition;
@@ -52,6 +54,24 @@ public class GameManager implements Constants {
 
     public void setTopTen(TopTen topTen) {
         this.topTen = topTen;
+    }
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public GameManager setFlag(boolean flag) {
+        this.flag = flag;
+        return this;
+    }
+
+    public int getCurrentTopPos() {
+        return currentTopPos;
+    }
+
+    public GameManager setCurrentTopPos(int currentTopPos) {
+        this.currentTopPos = currentTopPos;
+        return this;
     }
 
     public GameManager setNumberOfHearts(int numberOfHearts) {
@@ -114,29 +134,32 @@ public class GameManager implements Constants {
     }
 
     public void addToTopTen() {
-        this.flag = true;
+        setFlag(true);
         if (topTen.getRecords().isEmpty()) { // TopTen list is empty
             addRecordToTopTen( 0);
+            setCurrentTopPos(1);
         } else { // TopTen list is not empty
             ArrayList<Record> records = topTen.getRecords();
-            int winnerDistance = getDistance();
+            int gameDistance = getDistance();
             int i = 0;
-            if (winnerDistance > records.get(records.size() - 1).getDistance() || records.size() < TopTen.MAX_IN_LIST) {
+            if (gameDistance > records.get(records.size() - 1).getDistance() || records.size() < TopTen.MAX_IN_LIST) {
                 do {
                     int currentDistance = records.get(i).getDistance();
-                    if (winnerDistance > currentDistance && i < TopTen.MAX_IN_LIST) {
+                    if (gameDistance > currentDistance && i < TopTen.MAX_IN_LIST) {
                         if (records.size() == TopTen.MAX_IN_LIST) { // if list if full remove last
                             records.remove(records.size() - 1);
                         }
                         addRecordToTopTen(i);
-                        this.flag=false;
+                        setCurrentTopPos(i+1);
+                        setFlag(false);
                     }
                     if (i == records.size() - 1 && i < TopTen.MAX_IN_LIST) { // winner distance is the lowest, and there is room in the list
                         addRecordToTopTen(i + 1);
-                        this.flag=false;
+                        setCurrentTopPos(i+2);
+                        setFlag(false);
                     }
                     i++;
-                } while (i < records.size() && this.flag);
+                } while (i < records.size() && isFlag());
             }
         }
 
