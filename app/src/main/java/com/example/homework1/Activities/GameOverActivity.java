@@ -26,7 +26,7 @@ public class GameOverActivity extends AppCompatActivity implements Constants {
         setContentView(R.layout.activity_game_over);
         findViews();
         gameOver_LBL_Distance.setText(getIntent().getBundleExtra(getString(R.string.gameoverBundle)).getString(EXTRA_KEY_DISTANCE) + "m");
-        gameOver_LBL_Score.setText(getIntent().getBundleExtra(getString(R.string.gameoverBundle)).getString(EXTRA_KEY_Score));
+        gameOver_LBL_Score.setText(getIntent().getBundleExtra(getString(R.string.gameoverBundle)).getString(EXTRA_KEY_SCORE));
         String rating = getIntent().getBundleExtra(getString(R.string.gameoverBundle)).getString(EXTRA_KEY_TOP);
         if(!rating.equals("-1"))
             gameOver_LBL_Rating.setText("You took "+rating+" place");

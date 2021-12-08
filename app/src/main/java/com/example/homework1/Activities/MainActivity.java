@@ -14,9 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -301,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
             Bundle bundle = new Bundle();
 
             bundle.putString(GameOverActivity.EXTRA_KEY_DISTANCE,""+gameManager.getDistance());
-            bundle.putString(GameOverActivity.EXTRA_KEY_Score,""+gameManager.getCoin());
+            bundle.putString(GameOverActivity.EXTRA_KEY_SCORE,""+gameManager.getCoin());
             bundle.putString(GameOverActivity.EXTRA_KEY_TOP,""+gameManager.getCurrentTopPos());
             myIntent.putExtra(getString(R.string.gameoverBundle),bundle);
             startActivity(myIntent);

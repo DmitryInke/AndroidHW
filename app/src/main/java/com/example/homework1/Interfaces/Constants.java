@@ -31,7 +31,7 @@ public interface Constants {
     String EXTRA_KEY_GAME = "EXTRA_KEY_GAME";
     String EXTRA_KEY_DISTANCE = "EXTRA_KEY_DISTANCE";
     String EXTRA_KEY_TOP = "EXTRA_KEY_TOP";
-    String EXTRA_KEY_Score = "EXTRA_KEY_Score";
+    String EXTRA_KEY_SCORE = "EXTRA_KEY_SCORE";
     String KEY_TOP_TEN = "KEY_TOP_TEN";
 
 }
